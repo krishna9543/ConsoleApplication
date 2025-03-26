@@ -1,0 +1,12 @@
+﻿SOLID
+
+
+Single use principle - the class must have single prupose or responsibility only
+
+Open/close principle -  we able to extend the behaviour of the class without altering the class.
+
+Lisvok Substitution principle - subclass shoulf be substitutable it's base class wihtout affecting the program.
+
+I
+
+D
