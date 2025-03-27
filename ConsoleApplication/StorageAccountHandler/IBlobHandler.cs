@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleApplication.StorageAccountHandler
 {
-    interface IStorageAccountHandler
+    interface IBlobHandler
     {
         public Task DeleteBlobAsync(string blobName, string ContainerName);
     }

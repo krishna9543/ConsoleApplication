@@ -12,11 +12,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ConsoleApplication.StorageAccountHandler
 {
-    class StorageAccountHandler: IStorageAccountHandler
+    class BlobHandler : IBlobHandler
     {
         BlobServiceClient _blobServiceClient;
 
-        public StorageAccountHandler(string StorageAccountName,  string Accesskey, int maxdelayMS, int Maxretry)
+        public BlobHandler(string StorageAccountName, string Accesskey, int maxdelayMS, int Maxretry)
         {
             BlobClientOptions BlobClientOptions = new BlobClientOptions();
             BlobClientOptions.Retry.Mode = RetryMode.Exponential;
@@ -25,8 +25,8 @@ namespace ConsoleApplication.StorageAccountHandler
             string uriString = string.Concat("Https://" + StorageAccountName + ".blob.core.windows.net");
             _blobServiceClient = new BlobServiceClient(new Uri(uriString), new StorageSharedKeyCredential(StorageAccountName, Accesskey), BlobClientOptions);
         }
-        
-        public StorageAccountHandler(string StorageAccountName, int maxdelayMS, int Maxretry)
+
+        public BlobHandler(string StorageAccountName, int maxdelayMS, int Maxretry)
         {
             BlobClientOptions BlobClientOptions = new BlobClientOptions();
             BlobClientOptions.Retry.Mode = RetryMode.Exponential;
@@ -36,7 +36,7 @@ namespace ConsoleApplication.StorageAccountHandler
             _blobServiceClient = new BlobServiceClient(new Uri(uriString), new DefaultAzureCredential(), BlobClientOptions);
         }
 
-        public StorageAccountHandler(BlobServiceClient blobServiceClient)
+        public BlobHandler(BlobServiceClient blobServiceClient)
         {
             _blobServiceClient = blobServiceClient;
         }
@@ -46,9 +46,9 @@ namespace ConsoleApplication.StorageAccountHandler
         {
             BlobContainerClient _blobContainerClient = _blobServiceClient.GetBlobContainerClient(ContainerName);
             var response = await _blobContainerClient.DeleteBlobAsync(blobName);
-            Console.WriteLine("Deleted.......{0}",response);
+            Console.WriteLine("Deleted.......{0}", response);
         }
-        public async Task ReadBlobAsync(string blobName, string ContainerName)
+        public async Task<byte[]> ReadBlobAsync(string blobName, string ContainerName)
         {
             BlobContainerClient _blobContainerClient = _blobServiceClient.GetBlobContainerClient(ContainerName);
             BlobClient blobClient = _blobContainerClient.GetBlobClient(blobName);
@@ -59,6 +59,24 @@ namespace ConsoleApplication.StorageAccountHandler
                 Console.WriteLine("Blob Content: ");
                 Console.WriteLine(content);
             }
+
+            var response1 = await _blobServiceClient.GetBlobContainerClient(ContainerName).GetBlobClient(blobName).DownloadStreamingAsync();
+            return readFilly((Stream)response1.Value.Content);
+
+        }
+
+        private static byte[] readFilly(Stream stream)  // need learn
+        {
+            BinaryReader binaryReader = new BinaryReader(stream);
+            byte[] array = new byte[4042];
+            using MemoryStream memoryStream = new MemoryStream();
+            int count;
+            while((count = binaryReader.Read(array, 0, array.Length)) > 0)
+            {
+                memoryStream.Write(array, 0, count);
+            }
+            memoryStream.FlushAsync();
+            return array;
         }
 
         public async Task GetAllContainerNames()
@@ -76,8 +94,16 @@ namespace ConsoleApplication.StorageAccountHandler
             {
                 Console.WriteLine(names.Name);
             }
+        }
+
+        public async void samplemethod()
+        {
+            BlobContainerClient blobContainerClient  = _blobServiceClient.CreateBlobContainer("samplecontainer");
+
+            BlobClient blobClient = blobContainerClient.GetBlobClient("samplecontainer");
 
         }
+
     }
 }
 

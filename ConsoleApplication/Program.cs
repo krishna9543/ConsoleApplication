@@ -148,7 +148,7 @@ internal class Program
         
 
 
-        StorageAccountHandler accountHandler = new StorageAccountHandler(StorageAccountName, Accesskey, 100, 5);
+        BlobHandler accountHandler = new BlobHandler(StorageAccountName, Accesskey, 100, 5);
 
         //await accountHandler.DeleteBlobAsync(Blob, Container);
 
@@ -157,6 +157,8 @@ internal class Program
         await accountHandler.GetAllContainerNames();
 
         await accountHandler.GetAllBlobAsync("azure-webjobs-secrets");
+
+        accountHandler.samplemethod();
 
     }
 }
