@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Azure.Core;
 using Azure.Storage;
 using Azure.Identity;
+using Azure.Storage.Blobs.Models;
 
 namespace ConsoleApplication.StorageAccountHandler
 {
@@ -43,8 +44,20 @@ namespace ConsoleApplication.StorageAccountHandler
         public async Task DeleteBlobAsync(string blobName, string ContainerName)
         {
             BlobContainerClient _blobContainerClient = _blobServiceClient.GetBlobContainerClient(ContainerName);
-            await _blobContainerClient.DeleteBlobAsync(blobName);
-            Console.WriteLine("Deleted.......");
+            var response = await _blobContainerClient.DeleteBlobAsync(blobName);
+            Console.WriteLine("Deleted.......{0}",response);
+        }
+        public async Task ReadBlobAsync(string blobName, string ContainerName)
+        {
+            BlobContainerClient _blobContainerClient = _blobServiceClient.GetBlobContainerClient(ContainerName);
+            BlobClient blobClient = _blobContainerClient.GetBlobClient(blobName);
+            var response = await blobClient.DownloadAsync();
+            using (StreamReader reader = new StreamReader(response.Value.Content, Encoding.UTF8))
+            {
+                string content = await reader.ReadToEndAsync();
+                Console.WriteLine("Blob Content: ");
+                Console.WriteLine(content);
+            }
         }
     }
 }

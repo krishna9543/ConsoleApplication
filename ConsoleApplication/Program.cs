@@ -150,9 +150,9 @@ internal class Program
 
         StorageAccountHandler accountHandler = new StorageAccountHandler(StorageAccountName, Accesskey, 100, 5);
 
-        await accountHandler.DeleteBlobAsync(Blob, Container);
+        //await accountHandler.DeleteBlobAsync(Blob, Container);
 
-
+        await accountHandler.ReadBlobAsync(Blob, Container);
 
     }
 }
