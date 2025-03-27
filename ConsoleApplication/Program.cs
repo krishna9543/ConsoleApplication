@@ -152,7 +152,11 @@ internal class Program
 
         //await accountHandler.DeleteBlobAsync(Blob, Container);
 
-        await accountHandler.ReadBlobAsync(Blob, Container);
+        //await accountHandler.ReadBlobAsync(Blob, Container);
+
+        await accountHandler.GetAllContainerNames();
+
+        await accountHandler.GetAllBlobAsync("azure-webjobs-secrets");
 
     }
 }

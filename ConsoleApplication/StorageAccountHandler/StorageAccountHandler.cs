@@ -8,6 +8,7 @@ using Azure.Core;
 using Azure.Storage;
 using Azure.Identity;
 using Azure.Storage.Blobs.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace ConsoleApplication.StorageAccountHandler
 {
@@ -58,6 +59,24 @@ namespace ConsoleApplication.StorageAccountHandler
                 Console.WriteLine("Blob Content: ");
                 Console.WriteLine(content);
             }
+        }
+
+        public async Task GetAllContainerNames()
+        {
+            await foreach (var container in _blobServiceClient.GetBlobContainersAsync())
+            {
+                Console.WriteLine(container.Name);
+            }
+        }
+        
+        public async Task GetAllBlobAsync(string ContainerName)
+        {
+            var _blobContainerClient = _blobServiceClient.GetBlobContainerClient(ContainerName);
+            await foreach (var names in _blobContainerClient.GetBlobsAsync())
+            {
+                Console.WriteLine(names.Name);
+            }
+
         }
     }
 }
